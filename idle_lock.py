@@ -65,6 +65,8 @@ VK_F1 = 0x70
 MOD_ALT = 0x0001
 MOD_CONTROL = 0x0002
 MOD_NOREPEAT = 0x4000
+SWP_NOZORDER = 0x0004
+SWP_NOACTIVATE = 0x0010
 HOTKEY_MAIN_ID = 0x1D10
 HOTKEY_NUMPAD_ID = 0x1D11
 ERROR_ALREADY_EXISTS = 183
@@ -129,6 +131,52 @@ user32.RegisterHotKey.argtypes = [wintypes.HWND, ctypes.c_int,
 user32.RegisterHotKey.restype = wintypes.BOOL
 user32.UnregisterHotKey.argtypes = [wintypes.HWND, ctypes.c_int]
 user32.UnregisterHotKey.restype = wintypes.BOOL
+user32.GetParent.argtypes = [wintypes.HWND]
+user32.GetParent.restype = wintypes.HWND
+user32.SetWindowPos.argtypes = [wintypes.HWND, wintypes.HWND, ctypes.c_int,
+                                ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                                wintypes.UINT]
+user32.SetWindowPos.restype = wintypes.BOOL
+
+
+def _enable_dpi_awareness() -> str:
+    """Keep Tk coordinates aligned with Win32 monitor rectangles."""
+    try:
+        set_context = user32.SetProcessDpiAwarenessContext
+        set_context.argtypes = [ctypes.c_void_p]
+        set_context.restype = wintypes.BOOL
+        # DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
+        if set_context(ctypes.c_void_p(-4)):
+            return "PER_MONITOR_AWARE_V2"
+        log.warning("DPI_AWARENESS_V2_FAILED err=%s", kernel32.GetLastError())
+    except AttributeError:
+        pass
+    try:
+        set_legacy = user32.SetProcessDPIAware
+        set_legacy.argtypes = []
+        set_legacy.restype = wintypes.BOOL
+        if set_legacy():
+            return "SYSTEM_AWARE"
+        log.warning("DPI_AWARENESS_LEGACY_FAILED err=%s", kernel32.GetLastError())
+    except AttributeError:
+        pass
+    return "UNCHANGED"
+
+
+def _position_toplevel(win: tk.Toplevel, x: int, y: int,
+                       width: int, height: int) -> None:
+    """Place a Tk top-level at absolute virtual-screen coordinates."""
+    # Negative Tk geometry offsets are relative to the virtual desktop's right
+    # or bottom edge.  SetWindowPos is required for a true negative origin.
+    win.geometry(f"{width}x{height}+0+0")
+    win.update_idletasks()
+    child_hwnd = win.winfo_id()
+    hwnd = user32.GetParent(child_hwnd) or child_hwnd
+    kernel32.SetLastError(0)
+    if not user32.SetWindowPos(hwnd, None, x, y, width, height,
+                               SWP_NOZORDER | SWP_NOACTIVATE):
+        err = kernel32.GetLastError()
+        raise OSError(err, f"SetWindowPos failed for {width}x{height} at ({x}, {y})")
 
 
 def _sha256(path: pathlib.Path) -> str:
@@ -560,12 +608,26 @@ class IdleLock:
 
     def _new_overlay(self, x: int, y: int, width: int, height: int) -> tk.Toplevel:
         win = tk.Toplevel(self.root)
+        win.withdraw()
         win.overrideredirect(True)
         win.attributes("-topmost", True)
         win.configure(bg="#17172b", cursor="none")
-        win.geometry(f"{width}x{height}+{x}+{y}")
+        _position_toplevel(win, x, y, width, height)
         win.protocol("WM_DELETE_WINDOW", lambda: None)
+        win.deiconify()
         return win
+
+    def _hide_app_windows_for_lock(self) -> None:
+        """Hide management UI while locked, preserving unfinished settings."""
+        for attribute in ("main_window", "settings_dialog", "notice_dialog"):
+            win = getattr(self, attribute, None)
+            if not win:
+                continue
+            try:
+                if win.winfo_exists():
+                    win.withdraw()
+            except Exception:
+                log.exception("APP_WINDOW_HIDE_FAILED window=%s", attribute)
 
     def _show_status_overlays(self) -> None:
         self._hide_overlays()
@@ -691,6 +753,7 @@ class IdleLock:
         if not self._transition(State.LOCKING):
             return
         try:
+            self._hide_app_windows_for_lock()
             self._show_lock_display()
             self.input_guard.set_locked(True)
             self._transition(State.LOCKED)
@@ -963,7 +1026,9 @@ class IdleLock:
 
     def _show_settings(self) -> None:
         if self.settings_dialog and self.settings_dialog.winfo_exists():
+            self.settings_dialog.deiconify()
             self.settings_dialog.lift()
+            self.settings_dialog.focus_force()
             return
         win = tk.Toplevel(self.root)
         self.settings_dialog = win
@@ -1267,6 +1332,7 @@ class IdleLock:
         log.info("=" * 68)
         log.info("APPLICATION_START version=%s executable=%s sha256=%s",
                  APP_VERSION, executable, _sha256(executable))
+        log.info("DPI_AWARENESS mode=%s", _enable_dpi_awareness())
         self.root = tk.Tk()
         self.root.withdraw()
         self._install_exception_guards()
