@@ -17,9 +17,9 @@
 - 多螢幕負座標必須透過 Win32 `SetWindowPos` 定位；Tk 的負 geometry offset 不是絕對座標。
 
 ## 最近更新
-- 時間：2026-08-08 19:15 +08:00
+- 時間：2026-08-08 19:16 +08:00
 - 更新者：Codex
 - 電腦：YULIN-SFG16-72
-- 成果 commit：待回填
-- Git push：待執行
+- 成果 commit：6b4f0fd69ee58270550686488a2328b079a0cebe
+- Git push：VERIFIED
 - Obsidian：NOT_CONFIGURED
