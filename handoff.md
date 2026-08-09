@@ -23,3 +23,10 @@
 - 成果 commit：6b4f0fd69ee58270550686488a2328b079a0cebe
 - Git push：VERIFIED
 - Obsidian：NOT_CONFIGURED
+
+## 2026-08-09 生命週期權威更新
+
+- 上述多螢幕／DPI 修正與測試證據保留；Obsidian 不再屬於收工流程。
+- 新增 CHANGELOG，更新 AGENTS／README；程式與安裝包未修改。
+- GitHub：`LOCAL_ONLY`，尚未 commit／push。
+- 唯一續跑點：驗證治理 diff 後進入 Delivery Gate。

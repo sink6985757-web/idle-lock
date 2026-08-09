@@ -218,3 +218,10 @@ git push origin main --follow-tags
 - 解鎖方式固定為 `Ctrl + Alt + 0`，目前沒有密碼驗證或自訂快捷鍵介面。
 - 程式不會自動設定「隨 Windows 開機啟動」。
 - 這不是作業系統層級的安全鎖；需要安全離席時仍應使用 `Win + L`。
+
+## Agent workflow 與版本紀錄
+
+- GitHub canonical：`sink6985757-web/idle-lock`。
+- 本 README 是人類與 Agent／Tool 的安裝、使用、版本與公開文案；近期變更見 [`CHANGELOG.md`](CHANGELOG.md)。
+- 每次收工更新 CHANGELOG 與 handoff；GitHub delivery 前更新本 README。
+- 外部知識庫為 `ON_DEMAND_ONLY`，不屬於 initial／startup／shutdown。
