@@ -28,5 +28,5 @@
 
 - 上述多螢幕／DPI 修正與測試證據保留；Obsidian 不再屬於收工流程。
 - 新增 CHANGELOG，更新 AGENTS／README；程式與安裝包未修改。
-- GitHub：`LOCAL_ONLY`，尚未 commit／push。
-- 唯一續跑點：驗證治理 diff 後進入 Delivery Gate。
+- GitHub：治理 commit `9c634827dd4883da462ef0bd5bb4dbdb44e79a30` 已推送 `agent/readme-documentation` 並回讀一致；尚未合併 default branch。
+- 唯一續跑點：若要合併 default branch 或發布新版本，另走 PR／release Gate。
