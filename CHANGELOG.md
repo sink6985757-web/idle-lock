@@ -19,12 +19,13 @@
 - 新建 EXE frozen runtime test：六項結果全為 `True`，process cleanup 通過；README 的 10 個 PowerShell code block 均無 parser error。
 - Bundled EXE：19,318,987 bytes，SHA-256 `3ACB74528887CCA4156B8CB62633BFFBAB8C882C0E91905EC878575E104CC9C0`；來源 `idle_lock.py` 與目前 `HEAD` Git blob 一致。
 - Authenticode：`NotSigned`；此限制已在 README 以 SmartScreen 安全提醒揭露。
+- GitHub `main.zip` 實際下載／解壓回讀：只包含 `dist\IdleLock.exe`，bytes 與 SHA-256 一致；舊 EXE、settings 與其他 `dist/` 內容均未被打包。
 
 ### Delivery
 - GitHub `main`：`VERIFIED`，功能合併 commit `3343dbfbddff424d01972a10eb3ee69ae5d2bdc7` 已以非 force push 交付並回讀一致。
 - tag、GitHub Release 與 repository 可見性未變更。
 - Windows README 重寫：`VERIFIED`，文件 commit `a49e23bb7e586a4e52fa7ad360556e42c3702ca9` 已非 force push 至 `main` 並回讀一致。
-- Bundled EXE 整包交付：`LOCAL_ONLY/PENDING_GATE`，等待 commit、本機 ZIP 驗證、Delivery Gate、GitHub push 與實際 `main.zip` 回讀。
+- Bundled EXE 整包交付：`VERIFIED`，commit `3a94b7487054e44c19f610198e3d51ddbb3fba62` 已非 force push 至 `main`；遠端 SHA 與實際 GitHub `main.zip` 內容回讀一致。
 
 ## [Unreleased] - 2026-08-09
 
