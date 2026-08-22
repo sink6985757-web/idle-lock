@@ -7,11 +7,11 @@
 - 可執行：是
 - 已驗證：2026-08-22 fresh `py_compile` 與原始碼 runtime test 通過；兩台螢幕的桌面／幻燈片顯示、快捷鍵解鎖、重入保護與暫停／恢復全數通過；既有凍結 EXE runtime test 與使用者實機操作證據仍保留
 - GitHub：功能合併 commit `3343dbfbddff424d01972a10eb3ee69ae5d2bdc7` 已推送 `main` 並回讀一致
-- Windows README：已完成下載、解壓、隔離建置與新建 EXE runtime 驗證，目前為 `LOCAL_ONLY/PENDING_GATE`
-- 未完成：README 重寫尚待 Delivery Gate／GitHub 回讀；尚未建立新 tag／GitHub Release，也未發布新版 EXE
+- Windows README：已完成下載、解壓、隔離建置與新建 EXE runtime 驗證；文件 commit `a49e23bb7e586a4e52fa7ad360556e42c3702ca9` 已推送 `main` 並回讀一致
+- 未完成：尚未建立新 tag／GitHub Release，也未發布新版 EXE
 
 ## 下一步
-1. 完成 Windows README 重寫的 Delivery Gate、非 force push 與 GitHub SHA 回讀。
+1. 後續工作從 GitHub `main` 的最新 checkpoint 接續。
 2. 若要標記版本、建立 GitHub Release 或發布 EXE，另走 ReadyGate／release 授權。
 
 ## 注意事項
@@ -19,10 +19,10 @@
 - 多螢幕負座標必須透過 Win32 `SetWindowPos` 定位；Tk 的負 geometry offset 不是絕對座標。
 
 ## 最近更新
-- 時間：2026-08-22 21:34 +08:00
+- 時間：2026-08-22 22:01 +08:00
 - 更新者：Codex
 - 電腦：YULIN-SFG16-72
-- 成果 commit：3343dbfbddff424d01972a10eb3ee69ae5d2bdc7
+- 成果 commit：a49e23bb7e586a4e52fa7ad360556e42c3702ca9
 - Git push：VERIFIED
 - 外部知識庫：ON_DEMAND_ONLY
 
@@ -39,9 +39,10 @@
 - 功能合併 commit `3343dbfbddff424d01972a10eb3ee69ae5d2bdc7` 已非 force push 至 GitHub `main`，本機與遠端回讀一致。
 - 唯一續跑點：若要發布新版 EXE、tag 或 GitHub Release，另走 release Gate。
 
-## 2026-08-22 Windows README 重寫（交付前）
+## 2026-08-22 Windows README 重寫
 
 - GitHub 目前沒有 Release／EXE，且 `dist/` 不納入 Git；README 已改為先說明 Source ZIP 與可攜式 EXE 的差異。
 - 使用 GitHub 實際 `main.zip` 在全新暫存環境驗證解壓與完整建置指令，成功產生單一 EXE。
 - 新建 EXE 的 frozen runtime test 六項全為 `True`，測試後 input hook cleanup 成功，原有常駐 EXE 已恢復。
-- 目前狀態：`LOCAL_ONLY/PENDING_GATE`；下一步為文件 commit、Delivery Gate 與 GitHub 回讀。
+- 文件 commit `a49e23bb7e586a4e52fa7ad360556e42c3702ca9` 已非 force push 至 GitHub `main`，本機與遠端回讀一致。
+- 唯一續跑點：若要提供可直接下載的 EXE，另走 tag／GitHub Release／EXE 發布 Gate。

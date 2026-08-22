@@ -18,7 +18,7 @@
 ### Delivery
 - GitHub `main`：`VERIFIED`，功能合併 commit `3343dbfbddff424d01972a10eb3ee69ae5d2bdc7` 已以非 force push 交付並回讀一致。
 - EXE、tag、GitHub Release 與 repository 可見性未變更。
-- Windows README 重寫：`LOCAL_ONLY/PENDING_GATE`，等待文件 commit、Delivery Gate 與遠端回讀。
+- Windows README 重寫：`VERIFIED`，文件 commit `a49e23bb7e586a4e52fa7ad360556e42c3702ca9` 已非 force push 至 `main` 並回讀一致。
 
 ## [Unreleased] - 2026-08-09
 
