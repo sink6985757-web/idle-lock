@@ -6,7 +6,8 @@ venv/
 
 # PyInstaller output
 build/
-dist/
+dist/*
+!dist/IdleLock.exe
 
 # Runtime-generated files
 logs/

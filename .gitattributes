@@ -1,0 +1,2 @@
+# The bundled Windows executable is an intentional binary artifact.
+dist/IdleLock.exe binary

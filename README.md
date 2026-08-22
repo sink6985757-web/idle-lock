@@ -26,40 +26,49 @@ Idle Lock 是一套 Windows 專用的閒置監控與畫面保護工具。程式�
 ## Windows 下載、解壓縮與 EXE 使用（先看這裡）
 
 > [!IMPORTANT]
-> GitHub 的 **Source code (zip)** 是 Python 原始碼，不是 Windows 安裝包，裡面不會有 `IdleLock.exe`。截至 2026-08-22，本專案尚未發布 GitHub Release，因此現階段若要取得可雙擊的 EXE，必須依下方「方案 B」從原始碼自行建置。
+> 本專案已將驗證過的 `dist\IdleLock.exe` 直接包進 GitHub repository。即使 GitHub 按鈕顯示 **Source code (zip)**，下載並解壓整包後仍會包含可直接雙擊的 Windows EXE，不需要安裝 Python，也不需要自行建置。
 
 Idle Lock 是 Windows portable app，不是 MSI 或 Setup 安裝精靈。建置完成的單一 `IdleLock.exe` 已包含 Python 程式與相依套件；目標 Windows 電腦不需要另外安裝 Python。
 
 | 你的目的 | 應該下載／執行什麼 | 是否需要 Python |
 | --- | --- | --- |
-| 只想直接使用 EXE | GitHub Releases 的 `IdleLock.exe`；目前尚未提供 | 不需要 |
-| 現在就要取得 EXE | 下載 Source code ZIP，解壓後依方案 B 建置 | 只有建置電腦需要 |
+| 只想直接使用 EXE | 下載整包 ZIP，解壓後執行 `dist\IdleLock.exe` | 不需要 |
+| 想自行重新建置 EXE | 下載整包 ZIP，依方案 B 建置 | 只有建置電腦需要 |
 | 開發或除錯程式 | 解壓 Source code ZIP，執行 `idle_lock.py` | 需要 |
 
-### 方案 A：下載已建置的 IdleLock.exe
+### 方案 A：下載整包後直接執行 EXE（推薦）
 
-截至 2026-08-22，[GitHub Releases](https://github.com/sink6985757-web/idle-lock/releases) 尚未提供 `IdleLock.exe`。日後若 Releases 頁面的 **Assets** 出現 `IdleLock.exe`，一般 Windows 使用者應下載該檔案，而不是頁面自動產生的 **Source code (zip)** 或 **Source code (tar.gz)**。
+1. 在 GitHub 專案首頁按綠色 **Code** 按鈕，再選 **Download ZIP**；也可以直接下載 [完整 main ZIP](https://github.com/sink6985757-web/idle-lock/archive/refs/heads/main.zip)。
+2. 對下載的 `idle-lock-main.zip` 按右鍵，選擇 **解壓縮全部**。
+3. 打開解壓後的 `idle-lock-main\dist` 資料夾。
+4. 雙擊 `IdleLock.exe`。這個 EXE 已包含 Python 程式與相依套件，目標電腦不需要安裝 Python。
+5. 程式啟動後會出現在 Windows 系統匣；要完整結束，請在系統匣圖示上按右鍵，選擇「結束程式」。
 
-取得 `IdleLock.exe` 後：
+目前整包內 `dist\IdleLock.exe` 的 SHA-256：
 
-1. 建立一個可寫入的資料夾，例如 `Documents\IdleLock`。
-2. 將 `IdleLock.exe` 放入該資料夾；EXE 本身不是壓縮檔，不需要解壓縮。
-3. 雙擊 `IdleLock.exe`。程式會出現在 Windows 系統匣，並在同一資料夾建立 `settings.json` 與 `logs\`。
-4. 要完整結束程式，請在系統匣圖示上按右鍵，選擇「結束程式」。
+```text
+3ACB74528887CCA4156B8CB62633BFFBAB8C882C0E91905EC878575E104CC9C0
+```
+
+可在解壓後的專案根目錄用 PowerShell 核對：
+
+```powershell
+Get-FileHash .\dist\IdleLock.exe -Algorithm SHA256
+```
 
 > [!CAUTION]
 > 自行建置或尚未簽章的 EXE 可能觸發 Microsoft Defender SmartScreen。只執行你自行建置或從可信任專案頁面取得的檔案；不要為了執行未知 EXE 而關閉 Windows 安全性功能。
 
 ### 方案 B：下載 Source code ZIP 後自行建置 EXE
 
-建置電腦需要 Windows、Python 3.10 以上版本與網路連線；Python 只用於建置，完成後的 `IdleLock.exe` 可獨立執行。
+一般使用者不需要執行本方案。只有要修改程式或重新產生 EXE 時，建置電腦才需要 Windows、Python 3.10 以上版本與網路連線。
 
 #### 1. 下載並真正解壓縮 Source code ZIP
 
 1. 在 GitHub 專案首頁按綠色 **Code** 按鈕，再選 **Download ZIP**；也可以直接下載 [main Source code ZIP](https://github.com/sink6985757-web/idle-lock/archive/refs/heads/main.zip)。
 2. 在 Windows 的「下載」資料夾找到 `idle-lock-main.zip`。
 3. 對 ZIP 按右鍵，選擇 **解壓縮全部**。不要直接在 ZIP 預覽視窗裡執行 `.py` 檔案。
-4. 打開解壓後的 `idle-lock-main` 資料夾；其中應該看得到 `idle_lock.py`、`IdleLock.spec` 與 `requirements.txt`。
+4. 打開解壓後的 `idle-lock-main` 資料夾；其中應該看得到 `dist\IdleLock.exe`、`idle_lock.py`、`IdleLock.spec` 與 `requirements.txt`。
 
 若 Windows 檔案總管無法解壓，可在 PowerShell 使用：
 
@@ -136,7 +145,7 @@ py -3 -m venv .venv
 
 | 問題 | 原因與處理方式 |
 | --- | --- |
-| ZIP 裡只有 `.py`，沒有 EXE | 下載的是原始碼；依方案 B 建置，或等待 Releases 提供 `IdleLock.exe` |
+| ZIP 裡只有 `.py`，沒有 EXE | 確認下載的是最新 `main.zip`，重新解壓後查看 `idle-lock-main\dist\IdleLock.exe`；舊 ZIP 不會自動更新 |
 | ZIP 無法解壓 | 重新下載完整 ZIP，使用 Windows「解壓縮全部」或上方 `Expand-Archive`；不要在 ZIP 預覽中執行檔案 |
 | 找不到 `py` 或 `python` | 尚未安裝 Python，或安裝程式未加入啟動器／PATH |
 | `No module named pystray` | 尚未用 `.venv\Scripts\python.exe` 安裝 `requirements.txt` |
@@ -229,22 +238,25 @@ python idle_lock.py --threshold 300
 
 ## 建置 Windows EXE
 
-一般 Windows 使用者與第一次建置者，請依前面的「方案 B：下載 Source code ZIP 後自行建置 EXE」逐步操作。建置成功後的可攜式程式位於：
+GitHub repository 會直接追蹤一份通過 frozen runtime test 的可攜式 EXE；一般使用者下載整包即可使用。需要重新建置時，請依前面的方案 B 操作，輸出位置為：
 
 ```text
 dist\IdleLock.exe
 ```
 
-`build/`、`dist/`、`logs/`、`__pycache__/` 與本機設定檔不納入 Git 版本控制，因此 GitHub 的 Source code ZIP 不會包含先前在其他電腦建置的 EXE。
+Git 只追蹤指定的 `dist/IdleLock.exe`。`build/`、其他 `dist/` 內容、`logs/`、`__pycache__/`、本機設定與舊 EXE 備份都不納入版本控制。
 
 ## 專案結構
 
 ```text
 idle-lock/
+├─ dist/
+│  └─ IdleLock.exe    # GitHub 整包內可直接執行的 Windows 版本
 ├─ idle_lock.py       # 主程式、UI、Win32 輸入攔截與狀態管理
 ├─ IdleLock.spec      # PyInstaller 建置規格
 ├─ requirements.txt   # 執行階段 Python 依賴
 ├─ README.md          # 使用與開發說明
+├─ .gitattributes     # 將 bundled EXE 標記為 binary
 └─ .gitignore         # 排除建置與執行期檔案
 ```
 
