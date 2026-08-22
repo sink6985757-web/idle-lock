@@ -23,33 +23,128 @@ Idle Lock 是一套 Windows 專用的閒置監控與畫面保護工具。程式�
 - 發生未處理錯誤時，優先解除輸入封鎖與關閉遮罩，再進入可復原狀態。
 - 啟動時記錄執行檔版本、路徑與 SHA-256，方便追蹤實際執行版本。
 
-## 系統需求
+## Windows 下載、解壓縮與 EXE 使用（先看這裡）
 
-- Windows 作業系統；程式使用 Win32 API，不支援 macOS 或 Linux。
-- 從原始碼執行時需要 Python 3.10 以上版本。
-- Python 套件：`pystray`、`Pillow`。
-- Tkinter；一般 Windows 官方 Python 安裝程式已包含此元件。
+> [!IMPORTANT]
+> GitHub 的 **Source code (zip)** 是 Python 原始碼，不是 Windows 安裝包，裡面不會有 `IdleLock.exe`。截至 2026-08-22，本專案尚未發布 GitHub Release，因此現階段若要取得可雙擊的 EXE，必須依下方「方案 B」從原始碼自行建置。
 
-## 快速開始
+Idle Lock 是 Windows portable app，不是 MSI 或 Setup 安裝精靈。建置完成的單一 `IdleLock.exe` 已包含 Python 程式與相依套件；目標 Windows 電腦不需要另外安裝 Python。
 
-### 使用已建置的執行檔
+| 你的目的 | 應該下載／執行什麼 | 是否需要 Python |
+| --- | --- | --- |
+| 只想直接使用 EXE | GitHub Releases 的 `IdleLock.exe`；目前尚未提供 | 不需要 |
+| 現在就要取得 EXE | 下載 Source code ZIP，解壓後依方案 B 建置 | 只有建置電腦需要 |
+| 開發或除錯程式 | 解壓 Source code ZIP，執行 `idle_lock.py` | 需要 |
 
-如果已取得 `IdleLock.exe`，直接雙擊即可啟動。程式會常駐於 Windows 系統匣；關閉控制面板只會隱藏視窗，不會結束監控。
+### 方案 A：下載已建置的 IdleLock.exe
 
-要完整結束程式，請在系統匣圖示上按右鍵，選擇「結束程式」。
+截至 2026-08-22，[GitHub Releases](https://github.com/sink6985757-web/idle-lock/releases) 尚未提供 `IdleLock.exe`。日後若 Releases 頁面的 **Assets** 出現 `IdleLock.exe`，一般 Windows 使用者應下載該檔案，而不是頁面自動產生的 **Source code (zip)** 或 **Source code (tar.gz)**。
 
-### 從原始碼執行
+取得 `IdleLock.exe` 後：
 
-在 PowerShell 進入專案目錄後執行：
+1. 建立一個可寫入的資料夾，例如 `Documents\IdleLock`。
+2. 將 `IdleLock.exe` 放入該資料夾；EXE 本身不是壓縮檔，不需要解壓縮。
+3. 雙擊 `IdleLock.exe`。程式會出現在 Windows 系統匣，並在同一資料夾建立 `settings.json` 與 `logs\`。
+4. 要完整結束程式，請在系統匣圖示上按右鍵，選擇「結束程式」。
+
+> [!CAUTION]
+> 自行建置或尚未簽章的 EXE 可能觸發 Microsoft Defender SmartScreen。只執行你自行建置或從可信任專案頁面取得的檔案；不要為了執行未知 EXE 而關閉 Windows 安全性功能。
+
+### 方案 B：下載 Source code ZIP 後自行建置 EXE
+
+建置電腦需要 Windows、Python 3.10 以上版本與網路連線；Python 只用於建置，完成後的 `IdleLock.exe` 可獨立執行。
+
+#### 1. 下載並真正解壓縮 Source code ZIP
+
+1. 在 GitHub 專案首頁按綠色 **Code** 按鈕，再選 **Download ZIP**；也可以直接下載 [main Source code ZIP](https://github.com/sink6985757-web/idle-lock/archive/refs/heads/main.zip)。
+2. 在 Windows 的「下載」資料夾找到 `idle-lock-main.zip`。
+3. 對 ZIP 按右鍵，選擇 **解壓縮全部**。不要直接在 ZIP 預覽視窗裡執行 `.py` 檔案。
+4. 打開解壓後的 `idle-lock-main` 資料夾；其中應該看得到 `idle_lock.py`、`IdleLock.spec` 與 `requirements.txt`。
+
+若 Windows 檔案總管無法解壓，可在 PowerShell 使用：
 
 ```powershell
+$zipPath = Join-Path $env:USERPROFILE 'Downloads\idle-lock-main.zip'
+$extractPath = Join-Path $env:USERPROFILE 'Downloads\idle-lock-source'
+Expand-Archive -LiteralPath $zipPath -DestinationPath $extractPath
+Set-Location (Join-Path $extractPath 'idle-lock-main')
+```
+
+如果 `$extractPath` 已存在，請先改用另一個新的資料夾名稱，避免覆寫舊檔案。
+
+#### 2. 確認 Python 並建立隔離環境
+
+在解壓後的專案資料夾開啟 PowerShell，執行：
+
+```powershell
+py -3 --version
+py -3 -m venv .venv
+```
+
+若系統顯示找不到 `py`，請先安裝 Windows 版 Python；若電腦只有 `python` 指令，可改用：
+
+```powershell
+python --version
 python -m venv .venv
+```
+
+後續直接使用虛擬環境內的 Python，不需要執行 Activate，也不需要修改 PowerShell Execution Policy：
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install pyinstaller
+```
+
+#### 3. 建置單一 Windows EXE
+
+確認 PowerShell 目前位於含有 `IdleLock.spec` 的專案根目錄，再執行：
+
+```powershell
+.\.venv\Scripts\python.exe -m PyInstaller --clean --noconfirm IdleLock.spec
+```
+
+建置成功後，獨立執行檔位於：
+
+```text
+dist\IdleLock.exe
+```
+
+這個 `dist\IdleLock.exe` 才是可以複製到其他 Windows 電腦、直接雙擊且不需要 Python 的版本。`build\` 是建置暫存資料夾，不是要交付的程式。
+
+#### 4. 執行建置完成的 EXE
+
+```powershell
+Test-Path .\dist\IdleLock.exe
+.\dist\IdleLock.exe
+```
+
+第一行應顯示 `True`。第二行啟動後可能不會停留在 PowerShell 視窗，請到 Windows 系統匣查看 Idle Lock 圖示。
+
+### 方案 C：只供開發者從 Python 原始碼執行
+
+這種方式不會建立 EXE，而且目標電腦仍需要 Python：
+
+```powershell
+py -3 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe idle_lock.py
 ```
 
-預設行為：
+### Windows 下載與建置常見問題
+
+| 問題 | 原因與處理方式 |
+| --- | --- |
+| ZIP 裡只有 `.py`，沒有 EXE | 下載的是原始碼；依方案 B 建置，或等待 Releases 提供 `IdleLock.exe` |
+| ZIP 無法解壓 | 重新下載完整 ZIP，使用 Windows「解壓縮全部」或上方 `Expand-Archive`；不要在 ZIP 預覽中執行檔案 |
+| 找不到 `py` 或 `python` | 尚未安裝 Python，或安裝程式未加入啟動器／PATH |
+| `No module named pystray` | 尚未用 `.venv\Scripts\python.exe` 安裝 `requirements.txt` |
+| `No module named PyInstaller` | 執行 `.\.venv\Scripts\python.exe -m pip install pyinstaller` |
+| 建置後找不到 EXE | 確認指令沒有錯誤，並到專案根目錄的 `dist\IdleLock.exe` 查看 |
+| 雙擊 EXE 沒有主視窗 | 程式可能已常駐系統匣；展開 Windows 隱藏圖示區查看 |
+
+預設啟動行為：
 
 - 啟動後立即進入監控狀態。
 - 預設連續閒置 60 秒後鎖定。
@@ -134,20 +229,13 @@ python idle_lock.py --threshold 300
 
 ## 建置 Windows EXE
 
-安裝 PyInstaller 後，使用專案內的 `IdleLock.spec` 建置：
-
-```powershell
-python -m pip install pyinstaller
-pyinstaller --clean --noconfirm IdleLock.spec
-```
-
-建置完成後，執行檔位於：
+一般 Windows 使用者與第一次建置者，請依前面的「方案 B：下載 Source code ZIP 後自行建置 EXE」逐步操作。建置成功後的可攜式程式位於：
 
 ```text
 dist\IdleLock.exe
 ```
 
-`build/`、`dist/`、`logs/`、`__pycache__/` 與本機設定檔不納入 Git 版本控制。
+`build/`、`dist/`、`logs/`、`__pycache__/` 與本機設定檔不納入 Git 版本控制，因此 GitHub 的 Source code ZIP 不會包含先前在其他電腦建置的 EXE。
 
 ## 專案結構
 
