@@ -1,5 +1,18 @@
 # Idle Lock
 
+## 2026-09-05 更新
+
+保留 Code → Download ZIP 直接包含 dist/IdleLock.exe 的交付方式；加入 manual manifest，清除過期 checkpoint 未設定狀態。
+
+## 開工與收工
+
+1. 首次使用或治理缺件才執行 `initial`；既有專案平日直接 `startup`。
+2. 開工讀取 [manifest](.agents/project-lifecycle.json)、[AGENTS.md](AGENTS.md)、[handoff.md](handoff.md)，確認 Git root 與 `origin`，fetch 後分別比較目前 upstream 和 default branch `main`。fetch 不會同步工作樹。
+3. 在已確認範圍內修改與驗證。未提交內容、版本分叉與 unknown untracked 先保全、辨識，不直接覆蓋或整包 stage。
+4. 收工更新 [CHANGELOG.md](CHANGELOG.md) 與 handoff；使用 `manual` checkpoint，沿用當次已確認工作單的 commit／push 授權。只有遠端 SHA 回讀一致才算 GitHub 同步完成；Drive 同步另行回讀。
+
+固定 authority commit、專案 identity 與窄範圍文件 allowlist 見 manifest。一般開工不執行安裝、部署或外部帳號動作；既有 tag／Release、封存來源與私人設定依各自邊界維持。
+
 Idle Lock 是一套 Windows 專用的閒置監控與畫面保護工具。程式會持續偵測鍵盤與滑鼠的閒置時間；達到設定門檻後，自動顯示全螢幕鎖定畫面並暫時阻擋輸入。使用者可透過固定快捷鍵解除鎖定，也能在鎖定期間切換回 Windows 桌面顯示，或播放指定資料夾中的圖片。
 
 目前版本：**2.1.0**

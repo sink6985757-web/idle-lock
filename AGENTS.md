@@ -26,3 +26,12 @@
 
 - GitHub：public `sink6985757-web/idle-lock`
 - 外部知識庫：`ON_DEMAND_ONLY`
+
+## Portable lifecycle 維護契約
+
+- 專案：`sink6985757-web/idle-lock`；default branch：`main`；Git root 必須是本 repository。
+- 依 `.agents/project-lifecycle.json` 使用 manual checkpoint；authority pin 指向已回讀的治理來源。
+- Startup 只讀文件與 Git，fetch 後同時確認 upstream／default branch；不得用工作 branch 已同步冒充 default branch 已包含成果。
+- Shutdown 每次更新 CHANGELOG／handoff；README 隨人類安裝、使用或版本變化更新。
+- 本次已確認工作單的授權沿用至其範圍完成；不得擴張到 tag／Release、權限、刪除或封存。
+- 既有 EXE 為 19,318,987 bytes，SHA-256 3ACB74528887CCA4156B8CB62633BFFBAB8C882C0E91905EC878575E104CC9C0；本輪不重建、不啟動鎖定程式。原多螢幕／frozen runtime 測試為歷史證據，Authenticode NotSigned。只追蹤此單一 binary，其他設定、log 與 build 產物維持忽略。
